@@ -55,6 +55,23 @@ class StreamConnection implements ConnectionInterface
     }
 
     /**
+     * Reset connection state on clone so that we can reconnect
+     */
+    public function __clone()
+    {
+        $this->socket = null;
+        $this->buffer = new StringBuffer();
+        $this->commands = new SplQueue();
+        $this->readableCallback = array($this, 'read');
+        $this->writableCallback = array($this, 'write');
+
+        $this->state = new State();
+        $this->state->setProcessCallback($this->getProcessCallback());
+
+        $this->initializeReader();
+    }
+
+    /**
      * Disconnects from the server and destroys the underlying resource when
      * PHP's garbage collector kicks in.
      */

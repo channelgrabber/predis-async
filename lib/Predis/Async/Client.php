@@ -55,6 +55,14 @@ class Client
     }
 
     /**
+     * If we clone the client we need to clone the connection otherwise we won't be able to publish as well as subscribe
+     */
+    public function __clone()
+    {
+        $this->connection = clone $this->connection;
+    }
+
+    /**
      * Creates connection parameters.
      *
      * @param mixed $parameters Connection parameters.
